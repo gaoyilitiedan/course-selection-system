@@ -1,0 +1,1697 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="学生选课系统文档">
+<title>实验五 软件系统实现与测试 — 学生选课系统</title>
+<style>
+  @page {
+    size: A4;
+    margin: 2cm;
+  }
+  body {
+    font-family: "宋体", SimSun, serif;
+    font-size: 14px;
+    line-height: 1.8;
+    color: #000;
+    max-width: 210mm;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  h1 { font-size: 22px; text-align: center; font-family: "黑体", SimHei, sans-serif; margin-bottom: 5px; }
+  h2 { font-size: 18px; font-family: "黑体", SimHei, sans-serif; border-bottom: 2px solid #333; padding-bottom: 4px; margin-top: 30px; }
+  h3 { font-size: 15px; font-family: "黑体", SimHei, sans-serif; margin-top: 20px; }
+  h4 { font-size: 14px; font-family: "黑体", SimHei, sans-serif; }
+
+  p { text-indent: 2em; margin: 6px 0; }
+
+  table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 12px; }
+  table.thin { width: auto; }
+  th { background: #d9e2f3; border: 1px solid #333; padding: 6px 8px; text-align: center; font-weight: bold; }
+  td { border: 1px solid #333; padding: 5px 8px; }
+
+  .center { text-align: center; text-indent: 0; }
+  .no-indent { text-indent: 0; }
+
+  /* Diagram boxes for architecture */
+  .arch-layer { border: 2px solid #333; margin: 8px 0; padding: 10px; text-align: center; }
+  .arch-layer.controller { background: #e2efda; }
+  .arch-layer.service { background: #dae3f3; }
+  .arch-layer.repository { background: #fce4d6; }
+  .arch-box { display: inline-block; border: 1px solid #555; padding: 6px 12px; margin: 4px; background: #fff; font-size: 12px; }
+
+  /* E-R style */
+  .er-entity { border: 2px solid #333; display: inline-block; padding: 6px 14px; margin: 8px; text-align: center; background: #fff; font-size: 13px; font-weight: bold; min-width: 100px; }
+  .er-relation { color: #c00; font-weight: bold; margin: 0 6px; }
+
+  /* State diagram */
+  .state-box { border: 2px solid #333; border-radius: 4px; display: inline-block; padding: 8px 16px; margin: 6px; text-align: center; background: #fffde7; font-size: 13px; min-width: 90px; }
+  .state-arrow { font-size: 18px; margin: 0 4px; color: #c00; }
+
+  /* Flow chart */
+  .flow-box { border: 2px solid #333; display: inline-block; padding: 6px 12px; margin: 4px; text-align: center; font-size: 12px; }
+  .flow-diamond { border: 2px solid #333; display: inline-block; padding: 6px 16px; margin: 4px; text-align: center; font-size: 12px; transform: skewX(-5deg); background: #fef2cb; }
+  .flow-line { text-align: center; font-size: 14px; color: #555; margin: 2px 0; }
+
+  /* DFD */
+  .dfd-process { border: 2px solid #333; border-radius: 50%; display: inline-block; width: 100px; height: 60px; line-height: 60px; text-align: center; background: #e8f0fe; font-size: 12px; margin: 4px; }
+  .dfd-entity-box { border: 2px solid #333; display: inline-block; padding: 8px 16px; text-align: center; background: #fff; font-size: 13px; margin: 4px; }
+  .dfd-datastore { border: 2px solid #333; display: inline-block; padding: 4px 20px; text-align: center; font-size: 12px; margin: 4px; }
+
+  /* Use case */
+  .uc-system { border: 3px solid #333; padding: 20px; margin: 10px 0; min-height: 200px; position: relative; }
+  .uc-actor { font-weight: bold; font-size: 13px; display: inline-block; margin: 6px; }
+  .uc-use-case { border: 1px solid #555; border-radius: 12px; display: inline-block; padding: 4px 14px; margin: 3px; font-size: 12px; background: #f5f5f5; }
+
+  .section-desc { background: #f9f9f9; border-left: 3px solid #4472c4; padding: 8px 12px; margin: 8px 0; font-size: 13px; }
+
+  @media print {
+    body { padding: 0; }
+    .page-break { page-break-before: always; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== 封面 ==================== -->
+<div style="text-align:center; margin-top:80px;">
+<h1 style="font-size:26px;">实验五 软件系统实现与测试</h1>
+<br><br>
+<h2 style="border:none; font-size:20px;">学生选课系统<br>需求分析与设计文档</h2>
+<br><br><br>
+<table style="width:60%; margin:0 auto; border:none;">
+<tr><td style="border:none; text-align:right; width:40%;">课程名称：</td><td style="border:none;">软件工程</td></tr>
+<tr><td style="border:none; text-align:right;">实验名称：</td><td style="border:none;">软件系统实现与测试</td></tr>
+<tr><td style="border:none; text-align:right;">系统名称：</td><td style="border:none;">学生选课系统</td></tr>
+<tr><td style="border:none; text-align:right;">技术栈：</td><td style="border:none;">Spring Boot 3 + Vue 3 + H2</td></tr>
+<tr><td style="border:none; text-align:right;">文档日期：</td><td style="border:none;">2026年6月28日</td></tr>
+</table>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ==================== 目录 ==================== -->
+<h2>目录</h2>
+<ol style="line-height:2.2;">
+<li><b>系统需求概述</b>
+  <ol>
+  <li>数据流图 (DFD)</li>
+  <li>数据库E-R图</li>
+  <li>状态转换图</li>
+  <li>用例图</li>
+  <li>数据字典</li>
+  </ol>
+</li>
+<li><b>系统概要设计</b>
+  <ol>
+  <li>系统结构图</li>
+  </ol>
+</li>
+<li><b>系统详细设计</b>
+  <ol>
+  <li>系统类图</li>
+  <li>顺序图</li>
+  <li>程序流程图</li>
+  </ol>
+</li>
+</ol>
+
+<div class="page-break"></div>
+
+<!-- ==================== 第1章 系统需求概述 ==================== -->
+<h2>一、系统需求概述</h2>
+
+<h3>1. 系统功能需求描述</h3>
+
+<p>学生选课系统是一个基于B/S架构的大学课程 enrollment 平台，为系统管理员、学院管理员、教师和学生四类角色提供差异化的功能服务。系统需满足以下核心业务需求：</p>
+
+<p><b>(1) 系统管理员功能</b>：对学生、教师、课程和选课记录进行增删改查操作；对选课数据进行统计并生成柱状图导出。</p>
+<p><b>(2) 学院管理员功能</b>：对本学院的学生、教师、课程、选课记录和成绩进行增删改查；对本学院课程执行抽签操作，生成中签学生名单。</p>
+<p><b>(3) 教师功能</b>：编辑课程信息与介绍、上传课件、设置先修课程；查看选修自己课程的中签学生名单；录入课程成绩并生成成绩统计表（含各分数段人数与及格率）；向选修自己课程的学生发送消息留言。</p>
+<p><b>(4) 学生功能</b>：浏览课程信息并根据学号密码登录选课系统；查询已选课程与个人信息；选课时系统自动检查先修课程条件（先修课程未修或成绩不合格时拒绝选课并给出提示）；查询选课抽签结果与课程成绩；下载课程课件；与任课教师进行消息通信。</p>
+
+<p><b>核心业务规则</b>：</p>
+<ul>
+<li>先修课程检查：学生选课时，若课程设有先修课程，学生必须在先修课程中有状态为SELECTED且成绩≥60的选课记录，否则提示"您没有学习该课程的先修课程，不能进行选课！"。</li>
+<li>抽签算法：学院管理员对课程执行抽签时，若待抽签人数≤课程容量则全部中签；否则随机抽取容量数量学生为中签，其余为未中签。</li>
+<li>状态流转：选课状态从PENDING开始，经抽签变为SELECTED或REJECTED，SELECTED后录入成绩到达终态。</li>
+<li>学院隔离：学院管理员和教师只能操作本学院范围内的数据。</li>
+</ul>
+
+<div class="page-break"></div>
+
+<!-- ==================== 1.1 数据流图 ==================== -->
+<h3>1.1 系统的数据流图 (DFD)</h3>
+
+<h4>1.1.1 顶层数据流图（上下文图）</h4>
+<p>顶层DFD展示系统与外部实体之间的数据交互。学生选课系统与四类外部实体（系统管理员、学院管理员、教师、学生）进行交互，以统一的HTTP请求/响应格式进行数据交换。</p>
+
+<div style="text-align:center; margin:20px 0; padding:20px; border:1px solid #ccc; background:#fafafa;">
+
+<div style="display:inline-block; vertical-align:top; margin:10px; text-align:left;">
+<div class="dfd-entity-box" style="display:block;">系统管理员<br/><small>管理操作请求</small></div>
+<div style="text-align:center; margin:4px 0;">▼ 请求 ▲ 响应</div>
+</div>
+
+<div style="display:inline-block; vertical-align:top; margin:10px; text-align:left;">
+<div class="dfd-entity-box" style="display:block;">学院管理员<br/><small>学院管理+抽签</small></div>
+<div style="text-align:center; margin:4px 0;">▼ 请求 ▲ 响应</div>
+</div>
+
+<div style="display:inline-block; border:3px solid #333; border-radius:50%; width:150px; height:130px; line-height:130px; text-align:center; vertical-align:middle; background:#d9e2f3; font-size:14px; font-weight:bold; margin:10px;">
+学生选课<br/>系统<br/><small>P0</small>
+</div>
+
+<div style="display:inline-block; vertical-align:top; margin:10px; text-align:right;">
+<div style="text-align:center; margin:4px 0;">▼ 请求 ▲ 响应</div>
+<div class="dfd-entity-box" style="display:block;">教师<br/><small>课程管理+成绩</small></div>
+</div>
+
+<div style="display:inline-block; vertical-align:top; margin:10px; text-align:right;">
+<div style="text-align:center; margin:4px 0;">▼ 请求 ▲ 响应</div>
+<div class="dfd-entity-box" style="display:block;">学生<br/><small>选课+查询</small></div>
+</div>
+
+</div>
+<p class="center no-indent"><b>图1-1 顶层数据流图（上下文图）</b></p>
+
+<h4>1.1.2 第0层数据流图</h4>
+<p>第0层DFD将系统分解为主要功能处理模块，展示数据在各处理之间的流动路径。</p>
+
+<div style="border:2px solid #333; padding:15px; background:#fafafa; margin:10px 0;">
+
+<!-- Row 1: External entities -->
+<div style="text-align:center; margin-bottom:10px;">
+  <span class="dfd-entity-box">系统管理员</span>
+  <span style="margin:0 20px;"></span>
+  <span class="dfd-entity-box">学院管理员</span>
+  <span style="margin:0 20px;"></span>
+  <span class="dfd-entity-box">教师</span>
+  <span style="margin:0 20px;"></span>
+  <span class="dfd-entity-box">学生</span>
+</div>
+
+<div style="text-align:center; font-size:13px; color:#555;">↓↑ 请求/响应数据</div>
+
+<!-- Row 2: Controllers -->
+<div style="text-align:center; margin:10px 0; padding:10px; background:#e2efda; border:1px dashed #666;">
+  <b>控制层 (Controller Layer)</b><br/>
+  <span class="arch-box">AuthController<br/><small>登录认证</small></span>
+  <span class="arch-box">AdminController<br/><small>系统管理</small></span>
+  <span class="arch-box">DeptAdminController<br/><small>学院管理</small></span>
+  <span class="arch-box">TeacherController<br/><small>教师功能</small></span>
+  <span class="arch-box">StudentController<br/><small>学生功能</small></span>
+</div>
+
+<div style="text-align:center; font-size:13px; color:#555;">↓↑ 方法调用</div>
+
+<!-- Row 3: Services -->
+<div style="text-align:center; margin:10px 0; padding:10px; background:#dae3f3; border:1px dashed #666;">
+  <b>业务层 (Service Layer)</b><br/>
+  <span class="arch-box">AdminService</span>
+  <span class="arch-box">DeptAdminService</span>
+  <span class="arch-box">TeacherService</span>
+  <span class="arch-box">StudentService</span>
+  <span class="arch-box">StatisticsService<br/><small>图表生成</small></span>
+</div>
+
+<div style="text-align:center; font-size:13px; color:#555;">↓↑ JPA操作</div>
+
+<!-- Row 4: Repositories + DB -->
+<div style="text-align:center; margin:10px 0; padding:10px; background:#fce4d6; border:1px dashed #666;">
+  <b>数据层 (Repository Layer)</b><br/>
+  <span class="arch-box">UserRepository</span>
+  <span class="arch-box">StudentRepository</span>
+  <span class="arch-box">TeacherRepository</span>
+  <span class="arch-box">DepartmentRepository</span>
+  <span class="arch-box">CourseRepository</span>
+  <span class="arch-box">EnrollmentRepository</span>
+  <span class="arch-box">MessageRepository</span>
+  <span class="arch-box">CoursewareRepository</span>
+</div>
+
+<div style="text-align:center; font-size:13px; color:#555;">↓↑ SQL/JPA</div>
+
+<!-- Row 5: Database -->
+<div style="text-align:center; margin:10px 0;">
+  <span class="dfd-datastore" style="font-size:14px; padding:10px 30px; background:#fffde7;">H2 数据库<br/><small>coursedb</small></span>
+  <span style="margin:0 20px;"></span>
+  <span class="dfd-datastore" style="font-size:14px; padding:10px 30px; background:#fffde7;">文件系统<br/><small>uploads/</small></span>
+</div>
+
+</div>
+<p class="center no-indent"><b>图1-2 第0层数据流图</b></p>
+
+<h4>1.1.3 核心数据流描述</h4>
+<table>
+<tr><th>数据流名称</th><th>起点</th><th>终点</th><th>数据内容</th></tr>
+<tr><td>登录请求</td><td>用户（所有角色）</td><td>AuthController</td><td>username, password</td></tr>
+<tr><td>登录响应</td><td>AuthController</td><td>用户</td><td>token, userId, username, role</td></tr>
+<tr><td>CRUD请求</td><td>管理员</td><td>对应Controller</td><td>实体JSON数据 + Bearer Token</td></tr>
+<tr><td>CRUD响应</td><td>Controller</td><td>管理员</td><td>{code, message, data}</td></tr>
+<tr><td>选课请求</td><td>学生</td><td>StudentController</td><td>courseId + Token</td></tr>
+<tr><td>先修检查</td><td>StudentService</td><td>EnrollmentRepository</td><td>student + prerequisite course</td></tr>
+<tr><td>抽签指令</td><td>学院管理员</td><td>DeptAdminController</td><td>courseId + Token</td></tr>
+<tr><td>抽签结果</td><td>DeptAdminService</td><td>EnrollmentRepository</td><td>批量更新status (PENDING→SELECTED/REJECTED)</td></tr>
+<tr><td>柱状图请求</td><td>系统管理员</td><td>AdminController</td><td>Token</td></tr>
+<tr><td>图表数据</td><td>StatisticsService</td><td>CourseRepository/EnrollmentRepository</td><td>全部课程及选课人数</td></tr>
+<tr><td>柱状图响应</td><td>AdminController</td><td>系统管理员</td><td>PNG字节流 (image/png)</td></tr>
+<tr><td>课件上传</td><td>教师</td><td>TeacherController</td><td>MultipartFile + Token</td></tr>
+<tr><td>课件文件</td><td>TeacherController</td><td>文件系统(uploads/)</td><td>文件字节流</td></tr>
+<tr><td>课件下载请求</td><td>学生</td><td>StudentController</td><td>coursewareId + Token</td></tr>
+<tr><td>课件下载响应</td><td>StudentController</td><td>学生</td><td>文件流 (application/octet-stream)</td></tr>
+<tr><td>消息发送</td><td>教师/学生</td><td>对应Controller</td><td>courseId, toUserId, content</td></tr>
+<tr><td>消息存储</td><td>Service</td><td>MessageRepository</td><td>Message实体</td></tr>
+</table>
+<p class="center no-indent"><b>表1-1 数据流描述表</b></p>
+
+<div class="page-break"></div>
+
+<!-- ==================== 1.2 E-R图 ==================== -->
+<h3>1.2 数据库的E-R图</h3>
+
+<h4>1.2.1 实体及属性</h4>
+<p>系统包含8个核心实体，各实体属性如下表所示：</p>
+
+<table>
+<tr><th>实体</th><th>属性</th><th>主键</th><th>说明</th></tr>
+<tr>
+  <td><b>User</b></td>
+  <td>id, username, password, role, department_id</td>
+  <td>id</td>
+  <td>用户基类，JOINED继承策略，与Department多对一</td>
+</tr>
+<tr>
+  <td><b>Student</b></td>
+  <td>studentNo, name <br/><small>继承User: id, username, password, role, department</small></td>
+  <td>id (继承)</td>
+  <td>学生实体，继承User基类</td>
+</tr>
+<tr>
+  <td><b>Teacher</b></td>
+  <td>teacherNo, name <br/><small>继承User: id, username, password, role, department</small></td>
+  <td>id (继承)</td>
+  <td>教师实体，继承User基类</td>
+</tr>
+<tr>
+  <td><b>Department</b></td>
+  <td>id, name</td>
+  <td>id</td>
+  <td>学院/系别</td>
+</tr>
+<tr>
+  <td><b>Course</b></td>
+  <td>id, name, description, capacity, prerequisite_id, teacher_id, department_id</td>
+  <td>id</td>
+  <td>课程，自关联先修课程，关联教师和学院</td>
+</tr>
+<tr>
+  <td><b>Enrollment</b></td>
+  <td>id, student_id, course_id, status (PENDING/SELECTED/REJECTED), score</td>
+  <td>id</td>
+  <td>选课记录，关联Student和Course，(student_id, course_id)唯一约束</td>
+</tr>
+<tr>
+  <td><b>Message</b></td>
+  <td>id, fromUserType, fromUserId, toUserType, toUserId, course_id, content, createTime</td>
+  <td>id</td>
+  <td>留言消息，支持教师与学生双向通信</td>
+</tr>
+<tr>
+  <td><b>Courseware</b></td>
+  <td>id, course_id, fileName, filePath</td>
+  <td>id</td>
+  <td>课件，关联课程，实际文件存储在文件系统</td>
+</tr>
+</table>
+<p class="center no-indent"><b>表1-2 实体属性表</b></p>
+
+<h4>1.2.2 E-R关系图</h4>
+
+<div style="border:2px solid #333; padding:20px; background:#fafafa; margin:10px 0; text-align:center; overflow-x:auto;">
+
+<!-- Department row -->
+<div style="margin:15px 0;">
+  <span class="er-entity">Department<br/><small>id, name</small></span>
+</div>
+
+<!-- Relations from Department -->
+<div style="font-size:13px; margin:8px 0;">
+  <span class="er-relation">1 ─── *</span> &nbsp; (Student) &nbsp;&nbsp;
+  <span class="er-relation">1 ─── *</span> &nbsp; (Teacher) &nbsp;&nbsp;
+  <span class="er-relation">1 ─── *</span> &nbsp; (Course)
+</div>
+
+<!-- Entities row 1 -->
+<div style="margin:12px 0;">
+  <span class="er-entity" style="margin-right:30px;">Student<br/><small>继承User<br/>studentNo, name</small></span>
+  <span class="er-entity" style="margin-right:30px;">Teacher<br/><small>继承User<br/>teacherNo, name</small></span>
+  <span class="er-entity">Course<br/><small>id, name, description<br/>capacity</small></span>
+</div>
+
+<!-- Relations row -->
+<div style="font-size:13px; margin:10px 0;">
+  <span class="er-relation">1 ─── *</span> (Enrollment)
+  <span class="er-relation">1 ─── *</span> (Enrollment)<br/>
+  <span class="er-relation">1 ─── *</span> (Message) &nbsp;
+  <span class="er-relation">1 ─── *</span> (Message) &nbsp;
+  <span class="er-relation">1 ─── *</span> (Courseware) &nbsp;
+  <span class="er-relation">* ─── 0..1</span> (Prerequisite自关联)
+</div>
+
+<!-- Enrollment -->
+<div style="margin:12px 0;">
+  <span class="er-entity">Enrollment<br/><small>id, status, score</small></span>
+  <span style="margin:0 30px;"></span>
+  <span class="er-entity">Message<br/><small>id, fromUserType, fromUserId<br/>toUserType, toUserId, content<br/>createTime</small></span>
+  <span style="margin:0 30px;"></span>
+  <span class="er-entity">Courseware<br/><small>id, fileName, filePath</small></span>
+</div>
+
+</div>
+
+<p style="margin-top:15px;"><b>关系说明：</b></p>
+<table>
+<tr><th>关系</th><th>类型</th><th>说明</th></tr>
+<tr><td>Department → Student</td><td>1 : N</td><td>一个学院包含多名学生，每个学生属于一个学院</td></tr>
+<tr><td>Department → Teacher</td><td>1 : N</td><td>一个学院包含多名教师，每个教师属于一个学院</td></tr>
+<tr><td>Department → Course</td><td>1 : N</td><td>一个学院开设多门课程，每门课程属于一个学院</td></tr>
+<tr><td>Teacher → Course</td><td>1 : N</td><td>一名教师授课多门课程，每门课程有一位授课教师</td></tr>
+<tr><td>Student → Enrollment</td><td>1 : N</td><td>一名学生有多条选课记录</td></tr>
+<tr><td>Course → Enrollment</td><td>1 : N</td><td>一门课程有多条选课记录</td></tr>
+<tr><td>Course → Course (prerequisite)</td><td>N : 0..1</td><td>课程自关联先修课程，一门课程可有0或1门先修课程</td></tr>
+<tr><td>Course → Message</td><td>1 : N</td><td>消息关联课程，便于按课程筛选</td></tr>
+<tr><td>Course → Courseware</td><td>1 : N</td><td>一门课程可有多个课件文件</td></tr>
+<tr><td>Student → Message</td><td>1 : N</td><td>学生可发送/接收多条消息</td></tr>
+<tr><td>Teacher → Message</td><td>1 : N</td><td>教师可发送/接收多条消息</td></tr>
+</table>
+<p class="center no-indent"><b>图1-3 数据库E-R图</b></p>
+
+<h4>1.2.3 数据库表结构</h4>
+<table>
+<tr><th>表名</th><th>字段</th><th>类型</th><th>约束</th></tr>
+<tr><td rowspan="5">users</td><td>id</td><td>BIGINT</td><td>PK, AUTO_INCREMENT</td></tr>
+<tr><td>username</td><td>VARCHAR</td><td>UNIQUE, NOT NULL</td></tr>
+<tr><td>password</td><td>VARCHAR</td><td>NOT NULL</td></tr>
+<tr><td>role</td><td>VARCHAR</td><td>NOT NULL (ROLE_ADMIN/ROLE_DEPT_ADMIN/ROLE_TEACHER/ROLE_STUDENT)</td></tr>
+<tr><td>department_id</td><td>BIGINT</td><td>FK → departments.id, 可为null</td></tr>
+<tr><td rowspan="2">students</td><td>id</td><td>BIGINT</td><td>PK, FK → users.id (JOINED继承)</td></tr>
+<tr><td>student_no</td><td>VARCHAR</td><td>NOT NULL</td></tr>
+<tr><td></td><td>name</td><td>VARCHAR</td><td>NOT NULL</td></tr>
+<tr><td rowspan="2">teachers</td><td>id</td><td>BIGINT</td><td>PK, FK → users.id (JOINED继承)</td></tr>
+<tr><td>teacher_no</td><td>VARCHAR</td><td>NOT NULL</td></tr>
+<tr><td></td><td>name</td><td>VARCHAR</td><td>NOT NULL</td></tr>
+<tr><td rowspan="1">departments</td><td>id</td><td>BIGINT</td><td>PK, AUTO_INCREMENT</td></tr>
+<tr><td></td><td>name</td><td>VARCHAR</td><td>NOT NULL</td></tr>
+<tr><td rowspan="6">courses</td><td>id</td><td>BIGINT</td><td>PK, AUTO_INCREMENT</td></tr>
+<tr><td>name</td><td>VARCHAR</td><td>NOT NULL</td></tr>
+<tr><td>description</td><td>TEXT</td><td>课程介绍</td></tr>
+<tr><td>capacity</td><td>INT</td><td>NOT NULL, 课程容量</td></tr>
+<tr><td>prerequisite_id</td><td>BIGINT</td><td>FK → courses.id, 可为null</td></tr>
+<tr><td>teacher_id</td><td>BIGINT</td><td>FK → teachers.id, NOT NULL</td></tr>
+<tr><td></td><td>department_id</td><td>BIGINT</td><td>FK → departments.id, NOT NULL</td></tr>
+<tr><td rowspan="5">enrollments</td><td>id</td><td>BIGINT</td><td>PK, AUTO_INCREMENT</td></tr>
+<tr><td>student_id</td><td>BIGINT</td><td>FK → students.id, NOT NULL</td></tr>
+<tr><td>course_id</td><td>BIGINT</td><td>FK → courses.id, NOT NULL</td></tr>
+<tr><td>status</td><td>VARCHAR</td><td>NOT NULL (PENDING/SELECTED/REJECTED)</td></tr>
+<tr><td>score</td><td>DOUBLE</td><td>可为null</td></tr>
+<tr><td rowspan="7">messages</td><td>id</td><td>BIGINT</td><td>PK, AUTO_INCREMENT</td></tr>
+<tr><td>from_user_type</td><td>VARCHAR</td><td>NOT NULL (TEACHER/STUDENT)</td></tr>
+<tr><td>from_user_id</td><td>BIGINT</td><td>NOT NULL</td></tr>
+<tr><td>to_user_type</td><td>VARCHAR</td><td>NOT NULL (TEACHER/STUDENT)</td></tr>
+<tr><td>to_user_id</td><td>BIGINT</td><td>NOT NULL</td></tr>
+<tr><td>course_id</td><td>BIGINT</td><td>FK → courses.id, NOT NULL</td></tr>
+<tr><td>content</td><td>TEXT</td><td>NOT NULL</td></tr>
+<tr><td></td><td>create_time</td><td>DATETIME</td><td>NOT NULL</td></tr>
+<tr><td rowspan="3">coursewares</td><td>id</td><td>BIGINT</td><td>PK, AUTO_INCREMENT</td></tr>
+<tr><td>course_id</td><td>BIGINT</td><td>FK → courses.id, NOT NULL</td></tr>
+<tr><td>file_name</td><td>VARCHAR</td><td>NOT NULL</td></tr>
+<tr><td></td><td>file_path</td><td>VARCHAR</td><td>NOT NULL</td></tr>
+</table>
+<p class="center no-indent"><b>表1-3 数据库表结构</b></p>
+
+<div class="page-break"></div>
+
+<!-- ==================== 1.3 状态转换图 ==================== -->
+<h3>1.3 状态转换图</h3>
+
+<p>选课记录（Enrollment）的状态转换是系统的核心状态机。Enrollment实体在其生命周期中经历三个合法状态：<b>PENDING</b>（待抽签）、<b>SELECTED</b>（中签）、<b>REJECTED</b>（未中签）。</p>
+
+<div style="text-align:center; border:2px solid #333; padding:25px; background:#fafafa; margin:15px 0;">
+
+<!-- Initial -->
+<div style="margin-bottom:6px;">
+  <span style="display:inline-block; width:16px; height:16px; background:#333; border-radius:50%;"></span>
+  <span style="font-size:12px; margin-left:4px;">开始 (学生选课)</span>
+</div>
+<div class="flow-line">▼</div>
+
+<!-- PENDING -->
+<div style="margin:8px 0;">
+  <span class="state-box" style="background:#fff3cd; border-color:#ffc107; font-size:14px; padding: 12px 22px;">
+    <b>PENDING</b><br/><small>待抽签（初始状态）</small>
+  </span>
+</div>
+
+<div class="flow-line">▼ 学院管理员执行抽签</div>
+
+<!-- Decision diamond representation -->
+<div style="margin:10px 0;">
+  <table style="width:auto; margin:0 auto;">
+  <tr>
+    <td style="border:2px solid #333; padding:10px 16px; background:#fef2cb; font-size:13px; text-align:center;">
+      <b>选课人数 ≤ 课程容量?</b>
+    </td>
+  </tr>
+  </table>
+</div>
+
+<div style="position:relative;">
+  <span style="position:absolute; left:32%; top:0;">是 ↓</span>
+  <span style="position:absolute; right:30%; top:0;">否 ↓</span>
+  <br><br>
+  <span class="state-box" style="background:#d4edda; border-color:#28a745; font-size:14px; padding:12px 22px;">
+    <b>SELECTED</b><br/><small>中签</small>
+  </span>
+  <span style="margin:0 40px;"></span>
+  <span class="state-box" style="background:#f8d7da; border-color:#dc3545; font-size:14px; padding:12px 22px;">
+    <b>REJECTED</b><br/><small>未中签</small>
+  </span>
+</div>
+
+<div style="margin-top:20px;">
+  <span style="display:inline-block;">
+    <div class="flow-line">▼ 教师录入成绩</div>
+    <div class="flow-line">▼</div>
+  </span>
+  <span style="display:inline-block; margin-left:200px;">
+    <div class="flow-line">▼</div>
+  </span>
+</div>
+
+<div>
+  <span class="state-box" style="background:#e2e3e5; border-color:#6c757d;">
+    <b>[终态]</b><br/><small>成绩已录入</small>
+  </span>
+  <span style="margin:0 40px;"></span>
+  <span class="state-box" style="background:#e2e3e5; border-color:#6c757d;">
+    <b>[终态]</b><br/><small>未中签结束</small>
+  </span>
+</div>
+
+</div>
+
+<p class="center no-indent"><b>图1-4 Enrollment状态转换图</b></p>
+
+<h4>状态转换规则</h4>
+<table>
+<tr><th>当前状态</th><th>触发事件</th><th>目标状态</th><th>条件</th><th>执行者</th></tr>
+<tr><td>-</td><td>学生选课</td><td>PENDING</td><td>通过先修课程检查</td><td>学生</td></tr>
+<tr><td>PENDING</td><td>抽签</td><td>SELECTED</td><td>选课人数 ≤ 容量 或 随机抽中</td><td>学院管理员</td></tr>
+<tr><td>PENDING</td><td>抽签</td><td>REJECTED</td><td>选课人数 > 容量 且 未抽中</td><td>学院管理员</td></tr>
+<tr><td>SELECTED</td><td>录入成绩</td><td>[终结]</td><td>成绩已录入（score != null）</td><td>教师/管理员</td></tr>
+<tr><td>REJECTED</td><td>-</td><td>[终结]</td><td>自动终结，不可再变更</td><td>-</td></tr>
+</table>
+<p class="center no-indent"><b>表1-4 状态转换规则表</b></p>
+
+<div class="page-break"></div>
+
+<!-- ==================== 1.4 用例图 ==================== -->
+<h3>1.4 用例图</h3>
+
+<h4>1.4.1 系统用例总览</h4>
+
+<div style="border:3px solid #333; padding:25px; background:#fafafa; margin:15px 0;">
+
+<!-- Actors -->
+<div style="display:flex; justify-content:space-around; margin-bottom:15px; flex-wrap:wrap;">
+  <div style="text-align:center;">
+    <div style="font-size:28px;">👤</div>
+    <div class="uc-actor" style="display:block;">系统管理员</div>
+  </div>
+  <div style="text-align:center;">
+    <div style="font-size:28px;">👤</div>
+    <div class="uc-actor" style="display:block;">学院管理员</div>
+  </div>
+  <div style="text-align:center;">
+    <div style="font-size:28px;">👤</div>
+    <div class="uc-actor" style="display:block;">教师</div>
+  </div>
+  <div style="text-align:center;">
+    <div style="font-size:28px;">👤</div>
+    <div class="uc-actor" style="display:block;">学生</div>
+  </div>
+</div>
+
+<!-- System boundary -->
+<div style="border:2px solid #666; padding:15px; text-align:center;">
+  <div style="font-size:13px; color:#666; margin-bottom:8px;">&lt;&lt;学生选课系统&gt;&gt;</div>
+
+  <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:5px;">
+    <span class="uc-use-case">登录</span>
+    <span class="uc-use-case">管理学生(CRUD)</span>
+    <span class="uc-use-case">管理教师(CRUD)</span>
+    <span class="uc-use-case">管理课程(CRUD)</span>
+    <span class="uc-use-case">管理选课(CRUD)</span>
+    <span class="uc-use-case">管理成绩</span>
+    <span class="uc-use-case">统计选课并导出柱状图</span>
+    <span class="uc-use-case">本学院学生管理</span>
+    <span class="uc-use-case">本学院教师管理</span>
+    <span class="uc-use-case">本学院课程管理</span>
+    <span class="uc-use-case">本学院选课管理</span>
+    <span class="uc-use-case">本学院成绩管理</span>
+    <span class="uc-use-case">抽签并生成中签名单</span>
+    <span class="uc-use-case">编辑课程信息/介绍</span>
+    <span class="uc-use-case">上传课件</span>
+    <span class="uc-use-case">设置先修课程</span>
+    <span class="uc-use-case">查看中签学生名单</span>
+    <span class="uc-use-case">录入成绩</span>
+    <span class="uc-use-case">生成成绩统计</span>
+    <span class="uc-use-case">给学生发消息</span>
+    <span class="uc-use-case">选课</span>
+    <span class="uc-use-case">查询已选课程</span>
+    <span class="uc-use-case">查看个人信息</span>
+    <span class="uc-use-case">浏览课程信息</span>
+    <span class="uc-use-case">查询成绩</span>
+    <span class="uc-use-case">下载课件</span>
+    <span class="uc-use-case">给教师发消息</span>
+    <span class="uc-use-case">查询抽签结果</span>
+  </div>
+</div>
+</div>
+<p class="center no-indent"><b>图1-5 系统用例图</b></p>
+
+<h4>1.4.2 用例详细描述</h4>
+
+<table>
+<tr><th>编号</th><th>用例名称</th><th>参与者</th><th>前置条件</th><th>后置条件</th><th>基本事件流</th></tr>
+<tr>
+  <td>UC-01</td><td>登录</td><td>所有用户</td><td>无</td><td>获取Token</td>
+  <td>1.输入用户名密码 2.系统验证 3.返回Token和角色信息</td>
+</tr>
+<tr>
+  <td>UC-02</td><td>管理学生</td><td>系统管理员</td><td>已登录, ROLE_ADMIN</td><td>学生信息更新</td>
+  <td>1.选择操作类型(增/删/改/查) 2.提交学生数据 3.系统执行并返回结果</td>
+</tr>
+<tr>
+  <td>UC-03</td><td>管理教师</td><td>系统管理员</td><td>已登录, ROLE_ADMIN</td><td>教师信息更新</td>
+  <td>1.选择操作类型 2.提交教师数据 3.系统执行并返回结果</td>
+</tr>
+<tr>
+  <td>UC-04</td><td>管理课程</td><td>系统管理员</td><td>已登录, ROLE_ADMIN</td><td>课程信息更新</td>
+  <td>1.选择操作类型 2.提交课程数据(含教师、学院) 3.系统执行</td>
+</tr>
+<tr>
+  <td>UC-05</td><td>管理选课</td><td>系统管理员</td><td>已登录, ROLE_ADMIN</td><td>选课记录更新</td>
+  <td>1.选择操作类型 2.指定学生和课程 3.系统执行</td>
+</tr>
+<tr>
+  <td>UC-06</td><td>统计选课导出图表</td><td>系统管理员</td><td>已登录, ROLE_ADMIN</td><td>下载PNG柱状图</td>
+  <td>1.请求统计图表 2.系统查询所有课程选课人数 3.生成PNG返回</td>
+</tr>
+<tr>
+  <td>UC-07</td><td>本学院管理</td><td>学院管理员</td><td>已登录, ROLE_DEPT_ADMIN</td><td>本学院数据更新</td>
+  <td>1.选择管理对象(学生/教师/课程/选课/成绩) 2.操作限制在本学院范围</td>
+</tr>
+<tr>
+  <td>UC-08</td><td>抽签</td><td>学院管理员</td><td>已登录, 课程在本学院</td><td>中签名单生成</td>
+  <td>1.指定课程 2.系统获取PENDING选课 3.按容量抽签 4.返回中签名单</td>
+</tr>
+<tr>
+  <td>UC-09</td><td>编辑课程/上传课件/设先修</td><td>教师</td><td>已登录, 课程归属该教师</td><td>课程信息更新</td>
+  <td>1.选择操作(编辑/上传/设先修) 2.提交数据 3.系统验证并保存</td>
+</tr>
+<tr>
+  <td>UC-10</td><td>查中签名单/录成绩/统计</td><td>教师</td><td>已登录, 课程归属该教师</td><td>成绩数据更新</td>
+  <td>1.查看中签学生 2.录入成绩 3.查看分段统计</td>
+</tr>
+<tr>
+  <td>UC-11</td><td>发消息</td><td>教师</td><td>已登录, ROLE_TEACHER</td><td>消息已存储</td>
+  <td>1.指定课程和学生 2.输入内容 3.发送</td>
+</tr>
+<tr>
+  <td>UC-12</td><td>选课</td><td>学生</td><td>已登录, ROLE_STUDENT</td><td>选课记录PENDING</td>
+  <td>1.选择课程 2.系统检查先修 3.通过则创建PENDING记录<br/>3a.不通过则提示"您没有学习该课程的先修课程，不能进行选课！"</td>
+</tr>
+<tr>
+  <td>UC-13</td><td>查已选课/信息/浏览/成绩/抽签</td><td>学生</td><td>已登录, ROLE_STUDENT</td><td>返回查询结果</td>
+  <td>1.发起查询请求 2.系统返回对应数据</td>
+</tr>
+<tr>
+  <td>UC-14</td><td>下载课件</td><td>学生</td><td>已登录, ROLE_STUDENT</td><td>下载文件</td>
+  <td>1.选择课程和课件 2.系统返回文件流</td>
+</tr>
+<tr>
+  <td>UC-15</td><td>给教师发消息</td><td>学生</td><td>已登录, ROLE_STUDENT</td><td>消息已存储</td>
+  <td>1.指定课程和教师 2.输入内容 3.发送</td>
+</tr>
+</table>
+<p class="center no-indent"><b>表1-5 用例描述表</b></p>
+
+<div class="page-break"></div>
+
+<!-- ==================== 1.5 数据字典 ==================== -->
+<h3>1.5 数据字典</h3>
+
+<h4>1.5.1 数据项定义</h4>
+
+<table>
+<tr><th>编号</th><th>数据项名</th><th>别名</th><th>类型</th><th>长度</th><th>取值范围/含义</th><th>简述</th></tr>
+<tr><td>D-01</td><td>id</td><td>用户ID</td><td>BIGINT</td><td>19</td><td>自增整数</td><td>用户唯一标识，主键</td></tr>
+<tr><td>D-02</td><td>username</td><td>用户名</td><td>VARCHAR</td><td>50</td><td>字母数字组合</td><td>登录用户名，唯一</td></tr>
+<tr><td>D-03</td><td>password</td><td>密码</td><td>VARCHAR</td><td>50</td><td>字母数字组合</td><td>登录密码，明文存储</td></tr>
+<tr><td>D-04</td><td>role</td><td>角色</td><td>VARCHAR</td><td>20</td><td>ROLE_ADMIN | ROLE_DEPT_ADMIN | ROLE_TEACHER | ROLE_STUDENT</td><td>用户角色标识</td></tr>
+<tr><td>D-05</td><td>studentNo</td><td>学号</td><td>VARCHAR</td><td>20</td><td>S开头+数字</td><td>学生学号</td></tr>
+<tr><td>D-06</td><td>teacherNo</td><td>工号</td><td>VARCHAR</td><td>20</td><td>T开头+数字</td><td>教师工号</td></tr>
+<tr><td>D-07</td><td>name</td><td>姓名</td><td>VARCHAR</td><td>50</td><td>中文字符</td><td>学生或教师的姓名</td></tr>
+<tr><td>D-08</td><td>department.name</td><td>学院名称</td><td>VARCHAR</td><td>100</td><td>中文字符</td><td>学院/系别名称</td></tr>
+<tr><td>D-09</td><td>course.name</td><td>课程名称</td><td>VARCHAR</td><td>100</td><td>中文字符</td><td>课程名称</td></tr>
+<tr><td>D-10</td><td>description</td><td>课程介绍</td><td>TEXT</td><td>65535</td><td>文本</td><td>课程的详细介绍信息</td></tr>
+<tr><td>D-11</td><td>capacity</td><td>课程容量</td><td>INT</td><td>10</td><td>正整数</td><td>课程最大容纳学生数</td></tr>
+<tr><td>D-12</td><td>status</td><td>选课状态</td><td>VARCHAR</td><td>10</td><td>PENDING | SELECTED | REJECTED</td><td>选课记录状态枚举</td></tr>
+<tr><td>D-13</td><td>score</td><td>成绩</td><td>DOUBLE</td><td>-</td><td>0.0 — 100.0, 可为null</td><td>课程成绩</td></tr>
+<tr><td>D-14</td><td>fileName</td><td>文件名</td><td>VARCHAR</td><td>255</td><td>文件名称字符串</td><td>课件原始文件名</td></tr>
+<tr><td>D-15</td><td>filePath</td><td>文件路径</td><td>VARCHAR</td><td>500</td><td>文件系统路径</td><td>课件文件存储路径</td></tr>
+<tr><td>D-16</td><td>fromUserType</td><td>发送方类型</td><td>VARCHAR</td><td>10</td><td>TEACHER | STUDENT</td><td>消息发送方角色</td></tr>
+<tr><td>D-17</td><td>fromUserId</td><td>发送方ID</td><td>BIGINT</td><td>19</td><td>用户ID</td><td>消息发送方标识</td></tr>
+<tr><td>D-18</td><td>toUserType</td><td>接收方类型</td><td>VARCHAR</td><td>10</td><td>TEACHER | STUDENT</td><td>消息接收方角色</td></tr>
+<tr><td>D-19</td><td>toUserId</td><td>接收方ID</td><td>BIGINT</td><td>19</td><td>用户ID</td><td>消息接收方标识</td></tr>
+<tr><td>D-20</td><td>content</td><td>消息内容</td><td>TEXT</td><td>65535</td><td>文本</td><td>消息正文内容</td></tr>
+<tr><td>D-21</td><td>createTime</td><td>创建时间</td><td>DATETIME</td><td>-</td><td>日期时间</td><td>消息创建时间戳</td></tr>
+<tr><td>D-22</td><td>token</td><td>认证令牌</td><td>VARCHAR</td><td>36</td><td>UUID格式</td><td>用户登录后分配的会话标识</td></tr>
+</table>
+<p class="center no-indent"><b>表1-6 数据项定义表</b></p>
+
+<h4>1.5.2 数据结构定义</h4>
+
+<table>
+<tr><th>编号</th><th>数据结构名</th><th>组成</th><th>说明</th></tr>
+<tr><td>DS-01</td><td>User</td><td>id + username + password + role + department</td><td>用户基础信息结构</td></tr>
+<tr><td>DS-02</td><td>Student</td><td>User + studentNo + name</td><td>学生信息结构（继承User）</td></tr>
+<tr><td>DS-03</td><td>Teacher</td><td>User + teacherNo + name</td><td>教师信息结构（继承User）</td></tr>
+<tr><td>DS-04</td><td>Department</td><td>id + name</td><td>学院信息结构</td></tr>
+<tr><td>DS-05</td><td>Course</td><td>id + name + description + capacity + prerequisite + teacher + department</td><td>课程信息结构</td></tr>
+<tr><td>DS-06</td><td>Enrollment</td><td>id + student + course + status + score</td><td>选课记录结构</td></tr>
+<tr><td>DS-07</td><td>Message</td><td>id + fromUserType + fromUserId + toUserType + toUserId + course + content + createTime</td><td>消息结构</td></tr>
+<tr><td>DS-08</td><td>Courseware</td><td>id + course + fileName + filePath</td><td>课件信息结构</td></tr>
+<tr><td>DS-09</td><td>LoginRequest</td><td>username + password</td><td>登录请求结构</td></tr>
+<tr><td>DS-10</td><td>LoginResponse</td><td>token + userId + username + role</td><td>登录响应结构</td></tr>
+<tr><td>DS-11</td><td>ApiResponse</td><td>code + message + data</td><td>统一API响应结构</td></tr>
+<tr><td>DS-12</td><td>StatsResult</td><td>total + 0-59 + 60-69 + 70-79 + 80-89 + 90-100 + passRate</td><td>成绩统计结果结构</td></tr>
+</table>
+<p class="center no-indent"><b>表1-7 数据结构定义表</b></p>
+
+<h4>1.5.3 数据存储定义</h4>
+
+<table>
+<tr><th>编号</th><th>数据存储名</th><th>对应的数据结构</th><th>组织方式</th><th>说明</th></tr>
+<tr><td>F-01</td><td>users表</td><td>User</td><td>按id索引，username唯一索引</td><td>H2数据库表，用户基础信息</td></tr>
+<tr><td>F-02</td><td>students表</td><td>Student</td><td>按id索引（JOINED继承）</td><td>H2数据库表，学生扩展信息</td></tr>
+<tr><td>F-03</td><td>teachers表</td><td>Teacher</td><td>按id索引（JOINED继承）</td><td>H2数据库表，教师扩展信息</td></tr>
+<tr><td>F-04</td><td>departments表</td><td>Department</td><td>按id索引</td><td>H2数据库表，学院信息</td></tr>
+<tr><td>F-05</td><td>courses表</td><td>Course</td><td>按id索引</td><td>H2数据库表，课程信息</td></tr>
+<tr><td>F-06</td><td>enrollments表</td><td>Enrollment</td><td>按id索引，(student_id,course_id)唯一</td><td>H2数据库表，选课记录</td></tr>
+<tr><td>F-07</td><td>messages表</td><td>Message</td><td>按id索引</td><td>H2数据库表，消息记录</td></tr>
+<tr><td>F-08</td><td>coursewares表</td><td>Courseware</td><td>按id索引</td><td>H2数据库表，课件元数据</td></tr>
+<tr><td>F-09</td><td>uploads/目录</td><td>课件文件</td><td>文件系统目录</td><td>课件物理文件存储</td></tr>
+<tr><td>F-10</td><td>TokenStore</td><td>token→User映射</td><td>ConcurrentHashMap</td><td>内存中的Token会话管理</td></tr>
+</table>
+<p class="center no-indent"><b>表1-8 数据存储定义表</b></p>
+
+<h4>1.5.4 处理逻辑定义</h4>
+
+<table>
+<tr><th>编号</th><th>处理名</th><th>输入</th><th>输出</th><th>处理逻辑</th></tr>
+<tr><td>P-01</td><td>登录认证</td><td>username, password</td><td>token, userInfo</td><td>查询users表匹配用户名密码，生成UUID Token存入TokenStore，返回token和用户信息</td></tr>
+<tr><td>P-02</td><td>学生选课</td><td>studentId, courseId</td><td>Enrollment (PENDING)</td><td>1.查找课程 2.检查重复 3.检查先修课程(若有) 4.创建PENDING状态选课记录</td></tr>
+<tr><td>P-03</td><td>抽签</td><td>courseId, deptId</td><td>中签名单</td><td>1.验证课程归属本学院 2.获取所有PENDING选课 3.比较人数与容量 4.随机抽取/全部中签 5.批量更新状态</td></tr>
+<tr><td>P-04</td><td>成绩录入</td><td>enrollmentId, score</td><td>Enrollment (score已更新)</td><td>1.验证选课记录存在且状态为SELECTED 2.验证权限 3.设置score</td></tr>
+<tr><td>P-05</td><td>成绩统计</td><td>courseId</td><td>StatsResult</td><td>1.获取课程所有SELECTED选课 2.按分数段统计人数 3.计算及格率</td></tr>
+<tr><td>P-06</td><td>柱状图生成</td><td>全部课程+选课数据</td><td>PNG字节流</td><td>1.查询所有课程 2.统计每门课程选课人数 3.JFreeChart生成柱状图 4.输出PNG</td></tr>
+<tr><td>P-07</td><td>先修检查</td><td>student, prerequisiteCourse</td><td>通过/拒绝</td><td>查询学生在先修课程中是否有SELECTED且score≥60的记录</td></tr>
+<tr><td>P-08</td><td>消息发送</td><td>courseId, toUserId, content</td><td>Message</td><td>创建Message记录，设置收发双方信息，记录时间戳</td></tr>
+</table>
+<p class="center no-indent"><b>表1-9 处理逻辑定义表</b></p>
+
+<div class="page-break"></div>
+
+<!-- ==================== 第2章 系统概要设计 ==================== -->
+<h2>二、系统概要设计</h2>
+
+<h3>2.1 系统结构图</h3>
+
+<p>系统采用严格的三层B/S架构：表现层(Controller)、业务层(Service)、数据层(Repository)。前端为独立的Vue 3 SPA应用，通过HTTP REST API与后端通信。系统结构图如下：</p>
+
+<h4>2.1.1 整体系统架构</h4>
+
+<div style="border:2px solid #333; padding:20px; background:#fafafa; margin:15px 0; text-align:center;">
+
+<!-- Client tier -->
+<div style="margin:8px 0;">
+  <div class="arch-layer" style="background:#f0f0f0;">
+    <b>客户端层 (Client Tier)</b><br/>
+    <span class="arch-box">浏览器 (Vue 3 SPA)</span>
+    <span class="arch-box">Element Plus UI</span>
+    <span class="arch-box">Pinia状态管理</span>
+    <span class="arch-box">Axios HTTP Client</span>
+  </div>
+</div>
+
+<div style="text-align:center; font-size:14px; margin:5px 0;">▲▼ HTTP REST (JSON) / Bearer Token Auth</div>
+
+<!-- Presentation tier -->
+<div style="margin:8px 0;">
+  <div class="arch-layer controller">
+    <b>表现层 (Presentation Tier)</b> — Spring Boot @RestController<br/>
+    <span class="arch-box">AuthController<br/><small>/api/auth/**</small></span>
+    <span class="arch-box">AdminController<br/><small>/api/admin/**</small></span>
+    <span class="arch-box">DeptAdminController<br/><small>/api/dept/**</small></span>
+    <span class="arch-box">TeacherController<br/><small>/api/teacher/**</small></span>
+    <span class="arch-box">StudentController<br/><small>/api/student/**</small></span>
+    <br/><small>职责：接收HTTP请求、Token鉴权、参数校验、调用Service、返回统一格式响应</small>
+  </div>
+</div>
+
+<div style="text-align:center; font-size:14px; margin:5px 0;">▲▼ Java方法调用 (依赖注入 @Autowired)</div>
+
+<!-- Business tier -->
+<div style="margin:8px 0;">
+  <div class="arch-layer service">
+    <b>业务层 (Business Tier)</b> — Spring @Service<br/>
+    <span class="arch-box">AdminService<br/><small>全局CRUD</small></span>
+    <span class="arch-box">DeptAdminService<br/><small>学院CRUD+抽签</small></span>
+    <span class="arch-box">TeacherService<br/><small>课程/课件/成绩/消息</small></span>
+    <span class="arch-box">StudentService<br/><small>选课/浏览/下载/消息</small></span>
+    <span class="arch-box">StatisticsService<br/><small>JFreeChart图表</small></span>
+    <br/><small>职责：业务逻辑处理、事务管理(@Transactional)、权限验证、数据校验</small>
+  </div>
+</div>
+
+<div style="text-align:center; font-size:14px; margin:5px 0;">▲▼ Spring Data JPA (Repository接口)</div>
+
+<!-- Data tier -->
+<div style="margin:8px 0;">
+  <div class="arch-layer repository">
+    <b>数据层 (Data Tier)</b> — Spring Data JPA Repository<br/>
+    <span class="arch-box">UserRepo</span>
+    <span class="arch-box">StudentRepo</span>
+    <span class="arch-box">TeacherRepo</span>
+    <span class="arch-box">DeptRepo</span>
+    <span class="arch-box">CourseRepo</span>
+    <span class="arch-box">EnrollmentRepo</span>
+    <span class="arch-box">MessageRepo</span>
+    <span class="arch-box">CoursewareRepo</span>
+    <br/><small>职责：数据库CRUD操作、自定义查询方法、持久化</small>
+  </div>
+</div>
+
+<div style="text-align:center; font-size:14px; margin:5px 0;">▲▼ JDBC / Hibernate</div>
+
+<!-- Storage -->
+<div style="margin:8px 0;">
+  <div style="background:#fff; border:1px solid #333; padding:10px; margin:5px; display:inline-block; min-width:200px;">
+    <b>H2数据库</b><br/><small>jdbc:h2:mem:coursedb</small><br/><small>8张数据表</small>
+  </div>
+  <div style="background:#fff; border:1px solid #333; padding:10px; margin:5px; display:inline-block; min-width:200px;">
+    <b>文件系统</b><br/><small>uploads/</small><br/><small>课件文件</small>
+  </div>
+  <div style="background:#fff; border:1px solid #333; padding:10px; margin:5px; display:inline-block; min-width:200px;">
+    <b>内存</b><br/><small>TokenStore</small><br/><small>ConcurrentHashMap</small>
+  </div>
+</div>
+
+</div>
+<p class="center no-indent"><b>图2-1 系统结构图</b></p>
+
+<h4>2.1.2 模块划分</h4>
+<table>
+<tr><th>模块</th><th>子模块</th><th>包含的类</th><th>功能说明</th></tr>
+<tr><td rowspan="5">认证模块</td><td>登录</td><td>AuthController</td><td>处理登录请求，验证用户名密码</td></tr>
+<tr><td>Token管理</td><td>TokenStore</td><td>内存中维护Token→User映射</td></tr>
+<tr><td>鉴权拦截</td><td>各Controller中的check方法</td><td>从请求头提取Token，验证角色权限</td></tr>
+<tr><td>异常处理</td><td>GlobalExceptionHandler</td><td>@ControllerAdvice统一异常转JSON响应</td></tr>
+<tr><td>跨域配置</td><td>WebConfig</td><td>CORS配置允许前端跨域请求</td></tr>
+<tr><td rowspan="4">管理模块</td><td>系统管理</td><td>AdminController, AdminService</td><td>全局学生/教师/课程/选课/成绩CRUD</td></tr>
+<tr><td>学院管理</td><td>DeptAdminController, DeptAdminService</td><td>本学院范围CRUD+抽签功能</td></tr>
+<tr><td>教师功能</td><td>TeacherController, TeacherService</td><td>课程编辑、课件管理、先修设置、成绩</td></tr>
+<tr><td>学生功能</td><td>StudentController, StudentService</td><td>选课、浏览、下载、消息</td></tr>
+<tr><td>统计模块</td><td>图表生成</td><td>StatisticsService</td><td>JFreeChart生成选课人数柱状图</td></tr>
+<tr><td rowspan="7">数据模块</td><td>用户数据</td><td>User, UserRepository</td><td>用户基础信息持久化(JOINED继承)</td></tr>
+<tr><td>学生数据</td><td>Student, StudentRepository</td><td>学生扩展信息</td></tr>
+<tr><td>教师数据</td><td>Teacher, TeacherRepository</td><td>教师扩展信息</td></tr>
+<tr><td>课程数据</td><td>Course, CourseRepository</td><td>课程信息管理</td></tr>
+<tr><td>选课数据</td><td>Enrollment, EnrollmentRepository</td><td>选课记录与状态管理</td></tr>
+<tr><td>消息数据</td><td>Message, MessageRepository</td><td>师生消息通信</td></tr>
+<tr><td>课件数据</td><td>Courseware, CoursewareRepository</td><td>课件元数据管理</td></tr>
+</table>
+<p class="center no-indent"><b>表2-1 模块划分表</b></p>
+
+<div class="page-break"></div>
+
+<!-- ==================== 第3章 系统详细设计 ==================== -->
+<h2>三、系统详细设计</h2>
+
+<h3>3.1 系统类图</h3>
+
+<h4>3.1.1 实体类图</h4>
+
+<div style="border:2px solid #333; padding:15px; background:#fafafa; margin:15px 0; overflow-x:auto;">
+
+<table style="font-size:12px;">
+<tr>
+  <td style="vertical-align:top; border:2px solid #333; padding:8px; min-width:240px; background:#fff;">
+    <b>&lt;&lt;Entity&gt;&gt;<br/>User</b><br/>
+    <hr style="margin:4px 0;"/>
+    - id: Long<br/>
+    - username: String<br/>
+    - password: String<br/>
+    - role: String<br/>
+    - department: Department
+    <hr style="margin:4px 0;"/>
+    + getId()/setId()<br/>
+    + getUsername()/setUsername()<br/>
+    + getPassword()/setPassword()<br/>
+    + getRole()/setRole()<br/>
+    + getDepartment()/setDepartment()
+  </td>
+  <td style="vertical-align:top; border:2px solid #333; padding:8px; min-width:220px; background:#fff;">
+    <b>&lt;&lt;Entity&gt;&gt;<br/>Department</b><br/>
+    <hr style="margin:4px 0;"/>
+    - id: Long<br/>
+    - name: String
+    <hr style="margin:4px 0;"/>
+    + getId()/setId()<br/>
+    + getName()/setName()
+  </td>
+</tr>
+</table>
+
+<div style="text-align:center; margin:5px 0;">△ extends &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; △ extends</div>
+
+<table style="font-size:12px;">
+<tr>
+  <td style="vertical-align:top; border:2px solid #333; padding:8px; min-width:240px; background:#e8f5e9;">
+    <b>&lt;&lt;Entity&gt;&gt;<br/>Student</b><br/><small>@Table("students")</small>
+    <hr style="margin:4px 0;"/>
+    - studentNo: String<br/>
+    - name: String
+    <hr style="margin:4px 0;"/>
+    + getStudentNo()/setStudentNo()<br/>
+    + getName()/setName()
+  </td>
+  <td style="vertical-align:top; border:2px solid #333; padding:8px; min-width:240px; background:#e8f5e9;">
+    <b>&lt;&lt;Entity&gt;&gt;<br/>Teacher</b><br/><small>@Table("teachers")</small>
+    <hr style="margin:4px 0;"/>
+    - teacherNo: String<br/>
+    - name: String
+    <hr style="margin:4px 0;"/>
+    + getTeacherNo()/setTeacherNo()<br/>
+    + getName()/setName()
+  </td>
+</tr>
+</table>
+
+<br/>
+
+<table style="font-size:12px;">
+<tr>
+  <td style="vertical-align:top; border:2px solid #333; padding:8px; min-width:260px; background:#fff;">
+    <b>&lt;&lt;Entity&gt;&gt;<br/>Course</b>
+    <hr style="margin:4px 0;"/>
+    - id: Long<br/>
+    - name: String<br/>
+    - description: String<br/>
+    - capacity: int<br/>
+    - prerequisite: Course<br/>
+    - teacher: Teacher<br/>
+    - department: Department
+    <hr style="margin:4px 0;"/>
+    + CRUD方法
+  </td>
+  <td style="vertical-align:top; border:2px solid #333; padding:8px; min-width:260px; background:#fff;">
+    <b>&lt;&lt;Entity&gt;&gt;<br/>Enrollment</b>
+    <hr style="margin:4px 0;"/>
+    - id: Long<br/>
+    - student: Student<br/>
+    - course: Course<br/>
+    - status: Status {PENDING, SELECTED, REJECTED}<br/>
+    - score: Double
+    <hr style="margin:4px 0;"/>
+    + CRUD方法
+  </td>
+  <td style="vertical-align:top; border:2px solid #333; padding:8px; min-width:240px; background:#fff;">
+    <b>&lt;&lt;Entity&gt;&gt;<br/>Message</b>
+    <hr style="margin:4px 0;"/>
+    - id: Long<br/>
+    - fromUserType: String<br/>
+    - fromUserId: Long<br/>
+    - toUserType: String<br/>
+    - toUserId: Long<br/>
+    - course: Course<br/>
+    - content: String<br/>
+    - createTime: LocalDateTime
+  </td>
+  <td style="vertical-align:top; border:2px solid #333; padding:8px; min-width:220px; background:#fff;">
+    <b>&lt;&lt;Entity&gt;&gt;<br/>Courseware</b>
+    <hr style="margin:4px 0;"/>
+    - id: Long<br/>
+    - course: Course<br/>
+    - fileName: String<br/>
+    - filePath: String
+  </td>
+</tr>
+</table>
+
+</div>
+<p class="center no-indent"><b>图3-1 实体类图</b></p>
+
+<h4>3.1.2 实体关系说明</h4>
+<table>
+<tr><th>源类</th><th>目标类</th><th>关系</th><th>JPA注解</th></tr>
+<tr><td>Student</td><td>User</td><td>继承 (JOINED)</td><td>@Entity @Table("students")</td></tr>
+<tr><td>Teacher</td><td>User</td><td>继承 (JOINED)</td><td>@Entity @Table("teachers")</td></tr>
+<tr><td>User</td><td>Department</td><td>多对一</td><td>@ManyToOne @JoinColumn("department_id")</td></tr>
+<tr><td>Course</td><td>Teacher</td><td>多对一</td><td>@ManyToOne @JoinColumn("teacher_id")</td></tr>
+<tr><td>Course</td><td>Department</td><td>多对一</td><td>@ManyToOne @JoinColumn("department_id")</td></tr>
+<tr><td>Course</td><td>Course</td><td>多对一(自关联)</td><td>@ManyToOne @JoinColumn("prerequisite_id")</td></tr>
+<tr><td>Enrollment</td><td>Student</td><td>多对一</td><td>@ManyToOne @JoinColumn("student_id")</td></tr>
+<tr><td>Enrollment</td><td>Course</td><td>多对一</td><td>@ManyToOne @JoinColumn("course_id"), UniqueConstraint(student,course)</td></tr>
+<tr><td>Message</td><td>Course</td><td>多对一</td><td>@ManyToOne @JoinColumn("course_id")</td></tr>
+<tr><td>Courseware</td><td>Course</td><td>多对一</td><td>@ManyToOne @JoinColumn("course_id")</td></tr>
+</table>
+<p class="center no-indent"><b>表3-1 实体关系表</b></p>
+
+<h4>3.1.3 控制层与业务层类图</h4>
+
+<div style="border:2px solid #333; padding:15px; background:#fafafa; margin:15px 0; overflow-x:auto;">
+
+<table style="font-size:12px;">
+<tr>
+  <td style="vertical-align:top; border:2px solid #333; padding:8px; min-width:250px; background:#e2efda;">
+    <b>AdminController</b><br/><small>@RequestMapping("/api/admin")</small>
+    <hr style="margin:4px 0;"/>
+    + createStudent(): POST /students<br/>
+    + updateStudent(): PUT /students/{id}<br/>
+    + deleteStudent(): DELETE /students/{id}<br/>
+    + getStudents(): GET /students<br/>
+    + createTeacher(): POST /teachers<br/>
+    + updateTeacher(): PUT /teachers/{id}<br/>
+    + deleteTeacher(): DELETE /teachers/{id}<br/>
+    + getTeachers(): GET /teachers<br/>
+    + createCourse(): POST /courses<br/>
+    + updateCourse(): PUT /courses/{id}<br/>
+    + deleteCourse(): DELETE /courses/{id}<br/>
+    + getCourses(): GET /courses<br/>
+    + createEnrollment(): POST /enrollments<br/>
+    + updateEnrollment(): PUT /enrollments/{id}<br/>
+    + deleteEnrollment(): DELETE /enrollments/{id}<br/>
+    + getEnrollments(): GET /enrollments<br/>
+    + setGrade(): POST /grades<br/>
+    + getChart(): GET /stats/chart
+  </td>
+  <td style="vertical-align:top; border:2px solid #333; padding:8px; min-width:250px; background:#dae3f3;">
+    <b>AdminService</b>
+    <hr style="margin:4px 0;"/>
+    + createStudent(Student): Student<br/>
+    + updateStudent(id, Student): Student<br/>
+    + deleteStudent(id): void<br/>
+    + getAllStudents(): List&lt;Student&gt;<br/>
+    + createTeacher(Teacher): Teacher<br/>
+    + updateTeacher(id, Teacher): Teacher<br/>
+    + deleteTeacher(id): void<br/>
+    + getAllTeachers(): List&lt;Teacher&gt;<br/>
+    + createCourse(Course): Course<br/>
+    + updateCourse(id, Course): Course<br/>
+    + deleteCourse(id): void<br/>
+    + getAllCourses(): List&lt;Course&gt;<br/>
+    + createEnrollment(Enrollment): Enrollment<br/>
+    + updateEnrollment(id, Enrollment): Enrollment<br/>
+    + deleteEnrollment(id): void<br/>
+    + getAllEnrollments(): List&lt;Enrollment&gt;<br/>
+    + setGrade(enrollmentId, score): Enrollment
+  </td>
+</tr>
+</table>
+
+<div style="text-align:center; margin:8px 0;">▼ 调用 ▼</div>
+
+<table style="font-size:12px;">
+<tr>
+  <td style="vertical-align:top; border:2px solid #333; padding:8px; min-width:250px; background:#e2efda;">
+    <b>DeptAdminController</b><br/><small>@RequestMapping("/api/dept")</small>
+    <hr style="margin:4px 0;"/>
+    + CRUD /students (本学院)<br/>
+    + CRUD /teachers (本学院)<br/>
+    + CRUD /courses (本学院)<br/>
+    + CRUD /enrollments (本学院)<br/>
+    + draw(courseId): POST /draw/{courseId}<br/>
+    + getDrawResult(): GET /draw/{courseId}/result<br/>
+    + setGrade(): POST /grades<br/>
+    + getGrades(): GET /grades
+  </td>
+  <td style="vertical-align:top; border:2px solid #333; padding:8px; min-width:250px; background:#dae3f3;">
+    <b>DeptAdminService</b>
+    <hr style="margin:4px 0;"/>
+    + createStudent(Student, deptId): Student<br/>
+    + updateStudent(id, Student, deptId): Student<br/>
+    + deleteStudent(id, deptId): void<br/>
+    + getStudentsByDept(deptId): List<br/>
+    + createTeacher/methods...<br/>
+    + createCourse/methods...<br/>
+    + createEnrollment/methods...<br/>
+    + <b>draw(courseId, deptId): void</b><br/>
+    + getDrawResult(courseId, deptId): List<br/>
+    + setGrade(enrollmentId, score, deptId)<br/>
+    + getGradesByDept(deptId): List
+  </td>
+</tr>
+</table>
+
+<div style="text-align:center; margin:8px 0;">▼ 调用 ▼</div>
+
+<table style="font-size:12px;">
+<tr>
+  <td style="vertical-align:top; border:2px solid #333; padding:8px; min-width:250px; background:#e2efda;">
+    <b>TeacherController</b><br/><small>@RequestMapping("/api/teacher")</small>
+    <hr style="margin:4px 0;"/>
+    + updateCourse(): PUT /courses/{id}<br/>
+    + uploadCourseware(): POST /courses/{id}/courseware<br/>
+    + getCoursewares(): GET /courses/{id}/courseware<br/>
+    + setPrerequisite(): PUT /courses/{id}/prerequisite<br/>
+    + getSelectedEnrollments(): GET /enrollments/selected<br/>
+    + setGrade(): POST /grades<br/>
+    + getStats(): GET /stats/{courseId}<br/>
+    + sendMessage(): POST /messages<br/>
+    + getMessages(): GET /messages
+  </td>
+  <td style="vertical-align:top; border:2px solid #333; padding:8px; min-width:250px; background:#dae3f3;">
+    <b>TeacherService</b>
+    <hr style="margin:4px 0;"/>
+    + updateCourse(courseId, Course, teacherId): Course<br/>
+    + uploadCourseware(courseId, fileName, filePath, teacherId): Courseware<br/>
+    + getCoursewares(courseId, teacherId): List<br/>
+    + setPrerequisite(courseId, prereqId, teacherId): Course<br/>
+    + getSelectedEnrollments(teacherId): List<br/>
+    + setGrade(enrollmentId, score, teacherId): Enrollment<br/>
+    + getStats(courseId, teacherId): Map<br/>
+    + sendMessage(courseId, studentId, content, teacherId): Message<br/>
+    + getMessages(teacherId): List
+  </td>
+</tr>
+</table>
+
+<div style="text-align:center; margin:8px 0;">▼ 调用 ▼</div>
+
+<table style="font-size:12px;">
+<tr>
+  <td style="vertical-align:top; border:2px solid #333; padding:8px; min-width:250px; background:#e2efda;">
+    <b>StudentController</b><br/><small>@RequestMapping("/api/student")</small>
+    <hr style="margin:4px 0;"/>
+    + enroll(): POST /enroll<br/>
+    + getEnrollments(): GET /enrollments<br/>
+    + getInfo(): GET /info<br/>
+    + getCourses(): GET /courses<br/>
+    + getGrades(): GET /grades<br/>
+    + getCoursewareList(): GET /courseware/{courseId}<br/>
+    + downloadCourseware(): GET /courseware/{courseId}/download/{coursewareId}<br/>
+    + sendMessage(): POST /messages<br/>
+    + getMessages(): GET /messages<br/>
+    + getDrawResult(): GET /draw-result
+  </td>
+  <td style="vertical-align:top; border:2px solid #333; padding:8px; min-width:250px; background:#dae3f3;">
+    <b>StudentService</b>
+    <hr style="margin:4px 0;"/>
+    + <b>enroll(Student, courseId): Enrollment</b><br/>
+    + getEnrollments(studentId): List<br/>
+    + getInfo(studentId): Student<br/>
+    + getCourses(): List&lt;Course&gt;<br/>
+    + getGrades(studentId): List<br/>
+    + getCourseware(id): Courseware<br/>
+    + getCoursewaresByCourse(courseId): List<br/>
+    + sendMessage(courseId, teacherId, content, studentId): Message<br/>
+    + getMessages(studentId): List<br/>
+    + getDrawResult(studentId): List
+  </td>
+</tr>
+</table>
+
+<div style="text-align:center; margin:8px 0;">▼ 调用 ▼</div>
+
+<table style="font-size:12px;">
+<tr>
+  <td style="vertical-align:top; border:2px solid #333; padding:8px; min-width:250px; background:#fce4d6;" colspan="2">
+    <b>StatisticsService</b> (被AdminController和TeacherService调用)
+    <hr style="margin:4px 0;"/>
+    + generateChartBytes(): byte[] &nbsp;&nbsp; — JFreeChart生成柱状图PNG字节流
+  </td>
+</tr>
+</table>
+
+</div>
+<p class="center no-indent"><b>图3-2 控制层与业务层类图</b></p>
+
+<div class="page-break"></div>
+
+<h3>3.2 顺序图</h3>
+
+<h4>3.2.1 学生选课顺序图（核心流程）</h4>
+
+<p>学生选课是系统最核心的业务流程，涉及先修课程检查。以下为详细的消息交互顺序：</p>
+
+<div style="border:2px solid #333; padding:20px; background:#fafafa; margin:15px 0;">
+
+<table style="font-size:12px; border:none;">
+<tr>
+  <th style="min-width:100px;">学生</th>
+  <th style="min-width:140px;">StudentController</th>
+  <th style="min-width:140px;">StudentService</th>
+  <th style="min-width:140px;">CourseRepository</th>
+  <th style="min-width:160px;">EnrollmentRepository</th>
+  <th style="min-width:80px;">DB</th>
+</tr>
+<tr>
+  <td style="border-top:2px solid #333; font-size:11px;">1. POST /api/student/enroll<br/>{courseId: 2}</td>
+  <td style="border-top:2px solid #333;"></td>
+  <td></td><td></td><td></td><td></td>
+</tr>
+<tr>
+  <td></td>
+  <td style="border-top:2px solid #333; font-size:11px;">1.1 checkStudent(token)<br/>验证Token+角色</td>
+  <td></td><td></td><td></td><td></td>
+</tr>
+<tr>
+  <td></td>
+  <td style="border-top:2px solid #333; font-size:11px;">1.2 enroll(student, courseId)</td>
+  <td style="border-top:2px solid #333;"></td><td></td><td></td><td></td>
+</tr>
+<tr>
+  <td></td>
+  <td></td>
+  <td style="border-top:2px solid #333; font-size:11px;">2. findById(courseId)</td>
+  <td style="border-top:2px solid #333;"></td><td></td><td></td>
+</tr>
+<tr>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td style="border-top:2px solid #333; font-size:11px;">2.1 SQL SELECT</td>
+  <td></td>
+  <td style="border-top:2px solid #333;"></td>
+</tr>
+<tr>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td style="font-size:11px; color:#666;">← Course对象</td>
+  <td></td>
+  <td></td>
+</tr>
+<tr>
+  <td></td>
+  <td></td>
+  <td style="border-top:2px solid #333; font-size:11px;">3. findByStudentAndCourse(student, course)</td>
+  <td></td>
+  <td style="border-top:2px solid #333;"></td><td></td>
+</tr>
+<tr>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td style="font-size:11px; color:#666;">← (检查是否重复选课)</td>
+  <td></td>
+</tr>
+<tr>
+  <td></td>
+  <td></td>
+  <td style="border-top:2px solid #333; font-size:11px;">4. 检查先修课程 prerequisite != null?<br/>↓是：findByStudentAndCourse(student, prereq)</td>
+  <td></td>
+  <td style="border-top:2px solid #333;"></td><td></td>
+</tr>
+<tr>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td style="font-size:11px; color:#666;">← 先修选课记录</td>
+  <td></td>
+</tr>
+<tr>
+  <td colspan="6" style="border:none; background:#fff3cd; font-size:11px; text-align:center;">
+    <b>[分支判断]</b> 若先修记录不存在 或 status≠SELECTED 或 score&lt;60 或 score==null<br/>
+    → throw BusinessException("您没有学习该课程的先修课程，不能进行选课！")
+  </td>
+</tr>
+<tr>
+  <td></td>
+  <td></td>
+  <td style="border-top:2px solid #333; font-size:11px;">5. 创建Enrollment对象<br/>setStudent, setCourse<br/>setStatus(PENDING)</td>
+  <td></td><td></td><td></td>
+</tr>
+<tr>
+  <td></td>
+  <td></td>
+  <td style="border-top:2px solid #333; font-size:11px;">6. save(enrollment)</td>
+  <td></td>
+  <td style="border-top:2px solid #333;"></td><td></td>
+</tr>
+<tr>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td style="font-size:11px; color:#666;">→ INSERT INTO enrollments</td>
+  <td></td>
+</tr>
+<tr>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td style="font-size:11px; color:#666;">← Enrollment (已保存, status=PENDING)</td>
+  <td></td>
+</tr>
+<tr>
+  <td></td>
+  <td style="font-size:11px; color:#666;">← Enrollment</td>
+  <td></td><td></td><td></td><td></td>
+</tr>
+<tr>
+  <td style="font-size:11px; color:#666;">← HTTP 200 {code:200, data: Enrollment}</td>
+  <td></td><td></td><td></td><td></td><td></td>
+</tr>
+</table>
+
+</div>
+<p class="center no-indent"><b>图3-3 学生选课顺序图</b></p>
+
+<h4>3.2.2 抽签顺序图</h4>
+
+<div style="border:2px solid #333; padding:20px; background:#fafafa; margin:15px 0;">
+
+<table style="font-size:12px; border:none;">
+<tr>
+  <th style="min-width:100px;">学院管理员</th>
+  <th style="min-width:150px;">DeptAdminController</th>
+  <th style="min-width:150px;">DeptAdminService</th>
+  <th style="min-width:160px;">EnrollmentRepository</th>
+  <th style="min-width:80px;">DB</th>
+</tr>
+<tr>
+  <td style="border-top:2px solid #333; font-size:11px;">1. POST /api/dept/draw/{courseId}</td>
+  <td style="border-top:2px solid #333;"></td><td></td><td></td><td></td>
+</tr>
+<tr>
+  <td></td>
+  <td style="border-top:2px solid #333; font-size:11px;">1.1 checkDeptAdmin(token)<br/>验证Token+角色</td>
+  <td></td><td></td><td></td>
+</tr>
+<tr>
+  <td></td>
+  <td style="border-top:2px solid #333; font-size:11px;">1.2 draw(courseId, deptId)</td>
+  <td style="border-top:2px solid #333;"></td><td></td><td></td>
+</tr>
+<tr>
+  <td></td>
+  <td></td>
+  <td style="border-top:2px solid #333; font-size:11px;">2. findById(courseId) → 验证课程存在且归属本学院</td>
+  <td></td><td></td>
+</tr>
+<tr>
+  <td></td>
+  <td></td>
+  <td style="border-top:2px solid #333; font-size:11px;">3. findByCourseIdAndStatus(courseId, PENDING)<br/>获取所有待抽签选课记录</td>
+  <td style="border-top:2px solid #333;"></td><td></td>
+</tr>
+<tr>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td style="font-size:11px; color:#666;">← List&lt;Enrollment&gt; (PENDING)</td>
+  <td></td>
+</tr>
+<tr>
+  <td></td>
+  <td></td>
+  <td style="border-top:2px solid #333; font-size:11px;">
+    4. <b>判断: pendingCount ≤ capacity?</b><br/>
+    ├→ 是: 全部设为 SELECTED<br/>
+    └→ 否: Collections.shuffle(pendingEnrollments)<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;前capacity个 → SELECTED<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;其余 → REJECTED
+  </td>
+  <td></td><td></td>
+</tr>
+<tr>
+  <td></td>
+  <td></td>
+  <td style="border-top:2px solid #333; font-size:11px;">5. saveAll(pendingEnrollments)<br/>批量更新选课状态</td>
+  <td style="border-top:2px solid #333;"></td><td></td>
+</tr>
+<tr>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td style="font-size:11px; color:#666;">→ UPDATE enrollments SET status=...</td>
+  <td></td>
+</tr>
+<tr>
+  <td style="font-size:11px; color:#666;">← HTTP 200 {code:200}</td>
+  <td></td><td></td><td></td><td></td>
+</tr>
+</table>
+
+</div>
+<p class="center no-indent"><b>图3-4 抽签顺序图</b></p>
+
+<h4>3.2.3 成绩统计顺序图</h4>
+
+<div style="border:2px solid #333; padding:20px; background:#fafafa; margin:15px 0;">
+
+<table style="font-size:12px; border:none;">
+<tr>
+  <th style="min-width:80px;">教师</th>
+  <th style="min-width:150px;">TeacherController</th>
+  <th style="min-width:150px;">TeacherService</th>
+  <th style="min-width:160px;">EnrollmentRepository</th>
+  <th style="min-width:80px;">DB</th>
+</tr>
+<tr>
+  <td style="border-top:2px solid #333; font-size:11px;">GET /api/teacher/stats/{courseId}</td>
+  <td style="border-top:2px solid #333;"></td><td></td><td></td><td></td>
+</tr>
+<tr>
+  <td></td>
+  <td style="border-top:2px solid #333; font-size:11px;">checkTeacher(token)</td><td></td><td></td><td></td>
+</tr>
+<tr>
+  <td></td>
+  <td style="border-top:2px solid #333; font-size:11px;">getStats(courseId, teacherId)</td>
+  <td style="border-top:2px solid #333;"></td><td></td><td></td>
+</tr>
+<tr>
+  <td></td>
+  <td></td>
+  <td style="border-top:2px solid #333; font-size:11px;">findById(courseId)<br/>验证课程归属该教师</td>
+  <td></td><td></td>
+</tr>
+<tr>
+  <td></td>
+  <td></td>
+  <td style="border-top:2px solid #333; font-size:11px;">findByCourseIdAndStatus(courseId, SELECTED)</td>
+  <td style="border-top:2px solid #333;"></td><td></td>
+</tr>
+<tr>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td style="font-size:11px; color:#666;">← List&lt;Enrollment&gt;(SELECTED, 含score)</td>
+  <td></td>
+</tr>
+<tr>
+  <td></td>
+  <td></td>
+  <td style="border-top:2px solid #333; font-size:11px;">
+    统计逻辑:<br/>
+    total = list.size()<br/>
+    遍历每条记录:<br/>
+    &nbsp;&nbsp;score&lt;60 → range0_59++<br/>
+    &nbsp;&nbsp;60≤score&lt;70 → range60_69++<br/>
+    &nbsp;&nbsp;70≤score&lt;80 → range70_79++<br/>
+    &nbsp;&nbsp;80≤score&lt;90 → range80_89++<br/>
+    &nbsp;&nbsp;90≤score≤100 → range90_100++<br/>
+    passRate = passCount/total × 100%
+  </td>
+  <td></td><td></td>
+</tr>
+<tr>
+  <td style="font-size:11px; color:#666;">← {total, "0-59", "60-69", "70-79", "80-89", "90-100", passRate}</td>
+  <td></td><td></td><td></td><td></td>
+</tr>
+</table>
+
+</div>
+<p class="center no-indent"><b>图3-5 成绩统计顺序图</b></p>
+
+<div class="page-break"></div>
+
+<h3>3.3 程序流程图</h3>
+
+<h4>3.3.1 学生选课流程图</h4>
+
+<div style="border:2px solid #333; padding:20px; background:#fafafa; margin:15px 0; text-align:center;">
+
+<div class="flow-line">【开始】学生发起选课 POST /api/student/enroll</div>
+<div class="flow-line">▼</div>
+<div class="flow-box" style="background:#e8f0fe; min-width:200px;">验证Token与角色(ROLE_STUDENT)</div>
+<div class="flow-line">▼</div>
+<div class="flow-box" style="background:#e8f0fe; min-width:200px;">查找课程 findById(courseId)</div>
+<div class="flow-line">▼</div>
+<table style="width:auto; margin:8px auto;"><tr>
+  <td style="border:2px solid #333; padding:8px 16px; background:#fef2cb; font-size:13px; text-align:center;">
+    <b>课程是否存在?</b>
+  </td>
+</tr></table>
+<div>
+  <span style="color:#c00;">否 → 返回错误"课程不存在"</span>
+  <span style="margin-left:30px; color:#28a745;">是 ↓</span>
+</div>
+<div class="flow-box" style="background:#e8f0fe; min-width:200px;">检查是否已选过该课程<br/>findByStudentAndCourse(student, course)</div>
+<div class="flow-line">▼</div>
+<table style="width:auto; margin:8px auto;"><tr>
+  <td style="border:2px solid #333; padding:8px 16px; background:#fef2cb; font-size:13px; text-align:center;">
+    <b>已选过?</b>
+  </td>
+</tr></table>
+<div>
+  <span style="color:#c00;">是 → 返回错误"您已经选过该课程"</span>
+  <span style="margin-left:30px; color:#28a745;">否 ↓</span>
+</div>
+<table style="width:auto; margin:8px auto;"><tr>
+  <td style="border:2px solid #333; padding:8px 16px; background:#fef2cb; font-size:13px; text-align:center;">
+    <b>课程有先修课程? (prerequisite != null)</b>
+  </td>
+</tr></table>
+<div>
+  <span style="color:#28a745;">否 ↓（无先修）</span>
+  <span style="margin-left:50px; color:#c00;">是 ↓</span>
+</div>
+<div style="display:flex; justify-content:center; gap:80px;">
+  <div>
+    <div class="flow-box" style="background:#e8f0fe; min-width:200px;">查询先修课程选课记录<br/>findByStudentAndCourse(student, prerequisite)</div>
+    <div class="flow-line">▼</div>
+    <table style="width:auto;"><tr>
+      <td style="border:2px solid #333; padding:8px 16px; background:#fef2cb; font-size:13px; text-align:center;">
+        <b>先修记录存在<br/>且 status=SELECTED<br/>且 score≥60?</b>
+      </td>
+    </tr></table>
+    <div>
+      <span style="color:#c00;">否 → 返回错误<br/>"您没有学习该课程的<br/>先修课程，不能进行选课！"</span>
+      <span style="color:#28a745;"><br/>是 ↓</span>
+    </div>
+  </div>
+</div>
+<div class="flow-box" style="background:#d4edda; min-width:220px; font-size:14px;">创建Enrollment<br/>status = PENDING<br/>enrollmentRepository.save(enrollment)</div>
+<div class="flow-line">▼</div>
+<div class="flow-box" style="background:#d4edda; min-width:200px;">返回成功 {code:200, data: Enrollment}</div>
+<div class="flow-line">▼</div>
+<div>【结束】</div>
+
+</div>
+<p class="center no-indent"><b>图3-6 学生选课程序流程图</b></p>
+
+<h4>3.3.2 抽签算法流程图</h4>
+
+<div style="border:2px solid #333; padding:20px; background:#fafafa; margin:15px 0; text-align:center;">
+
+<div class="flow-line">【开始】学院管理员发起抽签 POST /api/dept/draw/{courseId}</div>
+<div class="flow-line">▼</div>
+<div class="flow-box" style="background:#e8f0fe; min-width:220px;">验证Token与角色(ROLE_DEPT_ADMIN)</div>
+<div class="flow-line">▼</div>
+<div class="flow-box" style="background:#e8f0fe; min-width:220px;">查找课程 findById(courseId)<br/>验证课程归属本学院</div>
+<div class="flow-line">▼</div>
+<div class="flow-box" style="background:#e8f0fe; min-width:240px;">获取所有PENDING状态选课记录<br/>findByCourseIdAndStatus(courseId, PENDING)</div>
+<div class="flow-line">▼</div>
+<table style="width:auto; margin:8px auto;"><tr>
+  <td style="border:2px solid #333; padding:8px 16px; background:#fef2cb; font-size:13px; text-align:center;">
+    <b>PENDING选课记录为空?</b>
+  </td>
+</tr></table>
+<div>
+  <span style="color:#c00;">是 → 返回"没有待抽签的选课记录"</span>
+  <span style="margin-left:30px; color:#28a745;">否 ↓</span>
+</div>
+<table style="width:auto; margin:8px auto;"><tr>
+  <td style="border:2px solid #333; padding:8px 16px; background:#fef2cb; font-size:13px; text-align:center;">
+    <b>pendingCount ≤ capacity (课程容量)?</b>
+  </td>
+</tr></table>
+<div style="display:flex; justify-content:center; gap:100px;">
+  <div style="text-align:center;">
+    <div style="color:#28a745; font-weight:bold;">是</div>
+    <div class="flow-box" style="background:#d4edda; min-width:200px;">全部PENDING记录<br/>设为 SELECTED</div>
+  </div>
+  <div style="text-align:center;">
+    <div style="color:#c00; font-weight:bold;">否</div>
+    <div class="flow-box" style="background:#fff3cd; min-width:200px;">Collections.shuffle()<br/>随机打乱所有PENDING记录</div>
+    <div class="flow-line">▼</div>
+    <div class="flow-box" style="background:#fff3cd; min-width:220px;">前 capacity 个 → SELECTED<br/>其余 → REJECTED</div>
+  </div>
+</div>
+<div class="flow-line">▼</div>
+<div class="flow-box" style="background:#d4edda; min-width:240px; font-size:14px;">批量更新数据库<br/>enrollmentRepository.saveAll(pendingEnrollments)</div>
+<div class="flow-line">▼</div>
+<div class="flow-box" style="background:#d4edda; min-width:200px;">返回成功 {code:200, message:"success"}</div>
+<div class="flow-line">▼</div>
+<div>【结束】</div>
+
+</div>
+<p class="center no-indent"><b>图3-7 抽签算法程序流程图</b></p>
+
+<h4>3.3.3 成绩统计流程图</h4>
+
+<div style="border:2px solid #333; padding:20px; background:#fafafa; margin:15px 0; text-align:center;">
+
+<div class="flow-line">【开始】教师请求 GET /api/teacher/stats/{courseId}</div>
+<div class="flow-line">▼</div>
+<div class="flow-box" style="background:#e8f0fe; min-width:220px;">验证Token与角色(ROLE_TEACHER)</div>
+<div class="flow-line">▼</div>
+<div class="flow-box" style="background:#e8f0fe; min-width:220px;">查找课程 findById(courseId)<br/>验证课程归属该教师</div>
+<div class="flow-line">▼</div>
+<div class="flow-box" style="background:#e8f0fe; min-width:240px;">获取所有SELECTED状态选课记录<br/>findByCourseIdAndStatus(courseId, SELECTED)</div>
+<div class="flow-line">▼</div>
+<div class="flow-box" style="background:#e8f0fe; min-width:220px;">初始化: total=0, 5个分段计数器=0, passCount=0</div>
+<div class="flow-line">▼</div>
+<table style="width:auto; margin:8px auto;"><tr>
+  <td style="border:2px solid #333; padding:8px 16px; background:#fef2cb; font-size:13px; text-align:center;">
+    <b>遍历每条Enrollment记录</b>
+  </td>
+</tr></table>
+<div class="flow-line">▼</div>
+<div class="flow-box" style="background:#fff; min-width:260px;">
+  对每条记录:<br/>
+  &nbsp;score为null? → 跳过，继续下一条<br/>
+  &nbsp;score ≥ 60? → passCount++<br/>
+  &nbsp;score &lt; 60 → range0_59++<br/>
+  &nbsp;60≤score&lt;70 → range60_69++<br/>
+  &nbsp;70≤score&lt;80 → range70_79++<br/>
+  &nbsp;80≤score&lt;90 → range80_89++<br/>
+  &nbsp;90≤score≤100 → range90_100++
+</div>
+<div class="flow-line">▼</div>
+<div class="flow-box" style="background:#d4edda; min-width:260px;">
+  计算: passRate = (passCount / total) × 100%
+</div>
+<div class="flow-line">▼</div>
+<div class="flow-box" style="background:#d4edda; min-width:260px;">
+  返回 Map:<br/>
+  {total, "0-59", "60-69", "70-79", "80-89", "90-100", passRate}
+</div>
+<div class="flow-line">▼</div>
+<div>【结束】</div>
+
+</div>
+<p class="center no-indent"><b>图3-8 成绩统计程序流程图</b></p>
+
+<div class="page-break"></div>
+
+<!-- ==================== 附录 ==================== -->
+<h2>附录：UML图与代码一致性对照表</h2>
+
+<p>以下表格验证所有UML图与实际代码实现之间的一致性：</p>
+
+<table>
+<tr><th>检查项</th><th>UML图约定</th><th>代码实现</th><th>一致性</th></tr>
+<tr>
+  <td>实体类名</td>
+  <td>User, Student, Teacher, Department, Course, Enrollment, Message, Courseware</td>
+  <td>entity/包下8个同名Java类</td>
+  <td style="color:green;">✓ 一致</td>
+</tr>
+<tr>
+  <td>继承策略</td>
+  <td>User基类, Student/Teacher JOINED继承</td>
+  <td>@Inheritance(strategy=JOINED)</td>
+  <td style="color:green;">✓ 一致</td>
+</tr>
+<tr>
+  <td>状态枚举</td>
+  <td>PENDING, SELECTED, REJECTED</td>
+  <td>Enrollment.Status枚举三个值</td>
+  <td style="color:green;">✓ 一致</td>
+</tr>
+<tr>
+  <td>状态流转</td>
+  <td>PENDING→抽签→SELECTED/REJECTED→终结</td>
+  <td>draw()方法实现: shuffle+截取</td>
+  <td style="color:green;">✓ 一致</td>
+</tr>
+<tr>
+  <td>三层架构</td>
+  <td>Controller→Service→Repository</td>
+  <td>严格3层, 无Controller直接调用Repository</td>
+  <td style="color:green;">✓ 一致</td>
+</tr>
+<tr>
+  <td>先修检查</td>
+  <td>SELECTED且score≥60</td>
+  <td>enroll()中检查3个条件</td>
+  <td style="color:green;">✓ 一致</td>
+</tr>
+<tr>
+  <td>抽签算法</td>
+  <td>人数≤capacity全选中, 否则shuffle取前capacity</td>
+  <td>Collections.shuffle(), 前capacity个SELECTED</td>
+  <td style="color:green;">✓ 一致</td>
+</tr>
+<tr>
+  <td>API路径前缀</td>
+  <td>/api/admin/**, /api/dept/**, /api/teacher/**, /api/student/**</td>
+  <td>Controller @RequestMapping注解</td>
+  <td style="color:green;">✓ 一致</td>
+</tr>
+<tr>
+  <td>响应格式</td>
+  <td>{code, message, data}</td>
+  <td>Map&lt;String,Object&gt; 或 GlobalExceptionHandler</td>
+  <td style="color:green;">✓ 一致</td>
+</tr>
+<tr>
+  <td>Token认证</td>
+  <td>Authorization: Bearer &lt;token&gt;</td>
+  <td>各Controller从Header提取, TokenStore验证</td>
+  <td style="color:green;">✓ 一致</td>
+</tr>
+<tr>
+  <td>学院隔离</td>
+  <td>DeptAdmin/Teacher仅操作本学院数据</td>
+  <td>Service方法中验证deptId匹配</td>
+  <td style="color:green;">✓ 一致</td>
+</tr>
+<tr>
+  <td>(student,course)唯一</td>
+  <td>E-R图定义唯一约束</td>
+  <td>@UniqueConstraint(columnNames={"student_id","course_id"})</td>
+  <td style="color:green;">✓ 一致</td>
+</tr>
+<tr>
+  <td>成绩统计</td>
+  <td>5个分数段+及格率, 仅统计SELECTED</td>
+  <td>getStats()仅查SELECTED, 逐条分档统计</td>
+  <td style="color:green;">✓ 一致</td>
+</tr>
+</table>
+<p class="center no-indent"><b>表A-1 UML与代码一致性对照表</b></p>
+
+<br/>
+<br/>
+
+<div style="text-align:center; margin-top:40px;">
+<h3>— 文档结束 —</h3>
+<p>本实验文档涵盖了学生选课系统完整的需求分析、概要设计和详细设计，<br/>
+包括数据流图、E-R图、状态转换图、用例图、数据字典、系统结构图、系统类图、顺序图和程序流程图。<br/>
+所有UML图均与项目实际代码严格一致。</p>
+</div>
+
+</body>
+</html>
