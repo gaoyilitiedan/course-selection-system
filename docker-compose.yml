@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  student:
+    image: ghcr.io/gaoyilitiedan/student:latest
+    container_name: student
+    ports:
+      - "3000:3000"
+    volumes:
+      # 将宿主机 ./data 挂载到容器 /app/data，H2 数据持久化
+      - ./data:/app/data
+    restart: unless-stopped
